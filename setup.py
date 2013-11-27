@@ -9,25 +9,28 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "cmutils",
+    name = "pipeable",
     version = "0.0.1",
-    author = "",
-    author_email = "",
-    description = ("common utilities for clipmerge"),
-    license = "closed",
-    keywords = "utils",
+    author = "Brian Cajes",
+    author_email = "brian.cajes@gmail.com",
+    description = ("Light-weight data pipeline framework"),
+    license = "MIT",
+    keywords = "pipeline",
     url = "",
     packages = find_packages(),
     long_description=read('README'),
     include_package_data=True,
     zip_safe=False,
     classifiers=[
-        "Development Status :: Alpha",
-        "Topic :: tools",
-        "License :: closed",
+        "Development Status :: Beta",
+        "Topic :: pipeline",
+        "License :: MIT",
     ],
     install_requires = [
+        "zope.component",
+        "zope.interface"
     ],
-test_requires = [
+    test_require = [
+        "nose"
     ]
 )
