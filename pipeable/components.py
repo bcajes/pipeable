@@ -1,41 +1,40 @@
-from pipeable.interfaces import IPipeline, IPipe, IPipelineRunner
-from pipeable.exceptions import InvalidPipeInput, SkipPipeItem
+from pipeable.interfaces import IPipeline, IPipe
+from pipeable.exceptions import SkipPipeItem
 from zope.interface import implements, implementer
-import collections
 
 
 class Pipeline(object):
+
     implements(IPipeline)
 
-    def __init__(self, pipes):
+    def __init__(self, pipes, context=None):
         """
         """
         #xxx TODO handle list of pipes of now, later handle dict with order numbers, and yaml file constructor params
-        self.pipe_runners = []
+        if not hasattr(pipes, '__iter__'):
+            raise ValueError("pipes not an iterable")
+        self.pipes = []
+        self.context = context
         for pipe in pipes:
-            pipe_runner = PipeRunner(implementer(IPipe)(pipe()))
-            self.pipe_runners.append(pipe_runner)
+            self.pipes.append(implementer(IPipe)(pipe()))
 
     def run(self, it):
         if not hasattr(it, '__iter__'):
-            raise InvalidPipeInput("Pipeline requires iterable input, got: " + it)
+            it = [it]
         res = it
-        for pipe_runner in self.pipe_runners:
-            res = pipe_runner.execute(res)
+        for pipe in self.pipes:
+            res = self._execute_pipe(pipe, res)
         return res
 
-class PipeRunner(object):
-    implements(IPipelineRunner)
-
-    def __init__(self, pipe):
-        self.pipe = pipe
-
-    def execute(self, item_gen):            
-        for item in item_gen:
+    def _execute_pipe(self, pipe, item_generator):            
+        for item in item_generator:
             try:
-                for res in self.pipe.process_item(item):
+                for res in pipe.process_item(item, self.context):
                     #process_items can produce multiple yields
                     yield res
             except SkipPipeItem:
                 continue
+                        
+
+
                 

@@ -7,8 +7,8 @@ class TestPipeline(unittest.TestCase):
         from pipeable.components import Pipeline
         return Pipeline
 
-    def _makeOne(self, pipes):
-        return self._getTargetClass()(pipes)
+    def _makeOne(self, pipes, ctx=None):
+        return self._getTargetClass()(pipes, ctx)
     
     def test_class_conforms_to_IPipeline(self):
         from zope.interface.verify import verifyClass
@@ -18,55 +18,68 @@ class TestPipeline(unittest.TestCase):
     def test_should_run_simple_pipes_add_one_add_two(self):
         test_pipes = self._getSimpleTestPipes()
         pipe_line = self._makeOne(test_pipes)
-        res_gen = pipe_line.run([1])
-        res = res_gen.next()
+        res = pipe_line.run(1).next()
         self.assertEquals(4, res, res)
+
+    def test_should_run_simple_pipes_add_one_add_two_generator_input(self):
+        test_pipes = self._getSimpleTestPipes()
+        pipe_line = self._makeOne(test_pipes)
+        res = list(pipe_line.run((x for x in range(1, 3))))
+        self.assertEquals([4,5], res, res)
 
     def test_should_yield_forward_and_backward(self):
         test_pipes = self._getForwardReverseTitles()
-        pipe_line = self._makeOne(test_pipes)
-        res = pipe_line.run(['foo', 'bar'])
+        class step_cnt_ctx(object):
+            count = 0
+        pipe_line = self._makeOne(test_pipes, step_cnt_ctx())
+        res = list(pipe_line.run(['foo', 'bar']))
         self.assertEquals(['Foo', 'Oof', 'Bar', 'Rab'], 
-                          list(res), list(res))
+                          res, res)
 
     def test_should_skip_foo(self):
         from pipeable.exceptions import SkipPipeItem
         class ForwardReverseNoFoo(object):
-            def process_item(self, str_item):
+            def process_item(self, str_item, ctx):
                 if str_item == 'foo':
                     raise SkipPipeItem
                 yield str_item
                 yield str_item[::-1]
         test_pipes = [ForwardReverseNoFoo]
         pipe_line = self._makeOne(test_pipes)
-        res = pipe_line.run(['foo', 'bar'])
+        res = list(pipe_line.run(['foo', 'bar']))
         self.assertEquals(['bar', 'rab'], 
-                          list(res), list(res))
+                          res, res)
 
-    def test_should_raise_invalid_pipe_input_on_non_iterable(self):
-        from pipeable.exceptions import InvalidPipeInput
+    def test_should_run_pipe_while_updating_shared_context(self):
         test_pipes = self._getForwardReverseTitles()
-        pipe_line = self._makeOne(test_pipes)
-        self.assertRaises(InvalidPipeInput, pipe_line.run,
-                          'bad_input_non_iterable')
+        class step_cnt_ctx(object):
+            count = 0
+        pipe_line = self._makeOne(test_pipes, step_cnt_ctx())
+        res = list(pipe_line.run(['foo', 'bar', 'baz']))
+        self.assertEquals(['Foo', 'Oof', 'Bar', 'Rab', 'Baz', 'Zab'], 
+                          res, res)
+        self.assertEquals(pipe_line.context.count, 9, 
+                          pipe_line.context.count)
 
     def _getSimpleTestPipes(self):
         class TestPipe1(object):
-            def process_item(self, item):
+            def process_item(self, item, ctx):
                 yield item + 1
         class TestPipe2(object):
-            def process_item(self, item):
+            def process_item(self, item, ctx):
                 yield item + 2
         return [TestPipe1, TestPipe2]
 
     def _getForwardReverseTitles(self):
         class ForwardReverse(object):
-            def process_item(self, str_item):
+            def process_item(self, str_item, step_cnt_ctx):
                 yield str_item
                 yield str_item[::-1]
+                step_cnt_ctx.count += 1
         class Title(object):
-            def process_item(self, str_item):
+            def process_item(self, str_item, step_cnt_ctx):
                 yield str_item.title()
+                step_cnt_ctx.count +=1
         return [ForwardReverse, Title]
 
 
