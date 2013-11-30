@@ -1,13 +1,12 @@
 from pipeable.interfaces import IPipeline, IPipe, IPipelineConfigurator
 from pipeable.exceptions import SkipPipeItem
-from zope.interface import implements, implementer
+from zope.interface import implementer
 from pipeable.utils import load_object
 import yaml
 
 
+@implementer(IPipeline)
 class Pipeline(object):
-
-    implements(IPipeline)
 
     def __init__(self, pipes, context=None):
         """
@@ -37,6 +36,7 @@ class Pipeline(object):
                 continue
 
 
+@implementer(IPipelineConfigurator)
 class YamlPipelineConfigurator(object):
     """
     Configuration file should contain a section called "pipes"
@@ -49,7 +49,6 @@ class YamlPipelineConfigurator(object):
       - mypackage.module2.pipeclass2
       - anotherpackage.somemodule.someotherpipe
     """
-    implements(IPipelineConfigurator)
 
     @staticmethod
     def createPipeline(config_file, context=None):

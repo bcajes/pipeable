@@ -101,7 +101,7 @@ class TestYamlPipelineConfigurator(unittest.TestCase):
             from io import StringIO
         except ImportError:
             from StringIO import StringIO
-        config = StringIO(self._sample_yaml_config_contents)
+        config = StringIO(unicode(self._sample_yaml_config_contents))
         ctx = get_sample_context()
         yaml_configurator = self._getTargetClass()
         pipeline = yaml_configurator.createPipeline(config, ctx)
