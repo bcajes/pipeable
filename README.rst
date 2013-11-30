@@ -1,3 +1,8 @@
+|Travis|_
+
+.. |Travis| image:: https://travis-ci.org/bcajes/makosg.png?branch=master
+.. _Travis: https://travis-ci.org/bcajes/makosg
+
 ************
 Pipeable
 ************
