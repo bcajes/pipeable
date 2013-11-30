@@ -40,6 +40,7 @@ example main::
         assert pipe_line.context.count == 9
 
 
-
+Tested on python 2.7, 3.2, 3.3
+------------------------------
 
 
