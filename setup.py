@@ -18,7 +18,7 @@ setup(
     keywords = "pipeline",
     url = "https://github.com/bcajes/pipeable",
     packages = find_packages(),
-    long_description=read('README'),
+    long_description=read('README.rst'),
     include_package_data=True,
     zip_safe=False,
     classifiers=[
