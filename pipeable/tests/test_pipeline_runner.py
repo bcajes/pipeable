@@ -1,6 +1,12 @@
 import unittest
 
 
+def get_sample_context():
+    class SampleTestContext(object):
+        count = 0
+    return SampleTestContext()
+
+
 class TestPipeline(unittest.TestCase):
     
     def _getTargetClass(self):
@@ -83,5 +89,29 @@ class TestPipeline(unittest.TestCase):
         return [ForwardReverse, Title]
 
 
+
+class TestYamlPipelineConfigurator(unittest.TestCase):
     
-        
+    def _getTargetClass(self):
+        from pipeable.components import YamlPipelineConfigurator
+        return YamlPipelineConfigurator
+
+    def test_should_create_pipeline_given_config_and_context(self):
+        from StringIO import StringIO
+        config = StringIO(self._sample_yaml_config_contents)
+        ctx = get_sample_context()
+        yaml_configurator = self._getTargetClass()
+        pipeline = yaml_configurator.createPipeline(config, ctx)
+        res = list(pipeline.run(1))
+        self.assertEquals(len(pipeline.pipes), 2)
+        self.assertEquals(pipeline.context.count, 0)
+        self.assertEquals(res, [4])
+
+
+    _sample_yaml_config_contents = """
+    pipes:
+       - pipeable.tests.test_pipes.TestPipe1
+       - pipeable.tests.test_pipes.TestPipe2
+    """
+
+    

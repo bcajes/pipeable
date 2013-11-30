@@ -10,7 +10,7 @@ def read(fname):
 
 setup(
     name = "pipeable",
-    version = "0.0.1",
+    version = "0.0.3",
     author = "Brian Cajes",
     author_email = "brian.cajes@gmail.com",
     description = ("Light-weight data pipeline framework"),
@@ -28,7 +28,8 @@ setup(
     ],
     install_requires = [
         "zope.component",
-        "zope.interface"
+        "zope.interface",
+        "pyYAML",
     ],
     test_require = [
         "nose"

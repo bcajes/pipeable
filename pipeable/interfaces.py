@@ -13,6 +13,7 @@ class IPipe(Interface):
         """
         pass
 
+
 class IPipeline(Interface):
     """ Pipeline interface
     """
@@ -25,4 +26,12 @@ class IPipeline(Interface):
         and optional shared context object that can be accesed by
         each pipe
         """
+        pass
+
+
+class IPipelineConfigurator(Interface):
+    """Create pipeline via configuration
+    """
+    
+    def creatPipeline(config):
         pass

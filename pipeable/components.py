@@ -1,6 +1,8 @@
-from pipeable.interfaces import IPipeline, IPipe
+from pipeable.interfaces import IPipeline, IPipe, IPipelineConfigurator
 from pipeable.exceptions import SkipPipeItem
 from zope.interface import implements, implementer
+from utils import load_object
+import yaml
 
 
 class Pipeline(object):
@@ -10,7 +12,6 @@ class Pipeline(object):
     def __init__(self, pipes, context=None):
         """
         """
-        #xxx TODO handle list of pipes of now, later handle dict with order numbers, and yaml file constructor params
         if not hasattr(pipes, '__iter__'):
             raise ValueError("pipes not an iterable")
         self.pipes = []
@@ -34,7 +35,29 @@ class Pipeline(object):
                     yield res
             except SkipPipeItem:
                 continue
-                        
 
 
-                
+class YamlPipelineConfigurator(object):
+    """
+    Configuration file should contain a section called "pipes"
+    that is an ordered list of python paths to pipe classes
+
+    Sample yaml config file:
+    
+    pipes:
+      - mypackage.module1.pipeclass1
+      - mypackage.module2.pipeclass2
+      - anotherpackage.somemodule.someotherpipe
+    """
+    implements(IPipelineConfigurator)
+
+    @staticmethod
+    def createPipeline(config_file, context=None):
+        pipe_class_paths = yaml.load(config_file)['pipes']
+        pipes = []
+        for pipe_class in pipe_class_paths:
+            pipe = load_object(pipe_class)
+            pipes.append(pipe)
+        return Pipeline(pipes, context)
+        
+
