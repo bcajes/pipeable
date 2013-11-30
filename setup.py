@@ -16,7 +16,7 @@ setup(
     description = ("Light-weight data pipeline framework"),
     license = "MIT",
     keywords = "pipeline",
-    url = "",
+    url = "https://github.com/bcajes/pipeable",
     packages = find_packages(),
     long_description=read('README'),
     include_package_data=True,
