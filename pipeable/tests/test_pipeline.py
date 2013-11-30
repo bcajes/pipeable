@@ -97,7 +97,10 @@ class TestYamlPipelineConfigurator(unittest.TestCase):
         return YamlPipelineConfigurator
 
     def test_should_create_pipeline_given_config_and_context(self):
-        from StringIO import StringIO
+        try:
+            from io import StringIO
+        except ImportError:
+            from StringIO import StringIO
         config = StringIO(self._sample_yaml_config_contents)
         ctx = get_sample_context()
         yaml_configurator = self._getTargetClass()

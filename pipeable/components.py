@@ -1,7 +1,7 @@
 from pipeable.interfaces import IPipeline, IPipe, IPipelineConfigurator
 from pipeable.exceptions import SkipPipeItem
 from zope.interface import implements, implementer
-from utils import load_object
+from pipeable.utils import load_object
 import yaml
 
 
