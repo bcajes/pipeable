@@ -31,7 +31,7 @@ setup(
         "zope.interface",
         "pyYAML",
     ],
-    test_require = [
+    tests_require = [
         "nose"
     ]
 )
