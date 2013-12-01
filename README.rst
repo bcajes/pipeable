@@ -1,14 +1,14 @@
-|Travis|_
-
-.. |Travis| image:: https://travis-ci.org/bcajes/pipeable.png?branch=master
-.. _Travis: https://travis-ci.org/bcajes/pipeable
-
 ************
 Pipeable
 ************
 
 Light-weight, config-driven, data pipeline framework
 ****************************************************
+
+|Travis|_
+
+.. |Travis| image:: https://travis-ci.org/bcajes/pipeable.png?branch=master
+.. _Travis: https://travis-ci.org/bcajes/pipeable
 
 Example usage
 -------------
